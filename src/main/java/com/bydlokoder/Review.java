@@ -4,14 +4,14 @@ import java.util.Date;
 
 public class Review implements Comparable<Review> {
     private long appId;
-    private double rate;
+    private String rate;
     private String title;
     private String body;
-    private Date date;
+    private String date;
     private String version;
     private Countries country;
 
-    public Review(long appId, Countries country, double rate, String title, String body, Date date, String version) {
+    public Review(long appId, Countries country, String rate, String title, String body, String date, String version) {
         this.appId = appId;
         this.country = country;
         this.rate = rate;
@@ -21,7 +21,7 @@ public class Review implements Comparable<Review> {
         this.version = version;
     }
 
-    public double getRate() {
+    public String getRate() {
         return rate;
     }
 
@@ -33,7 +33,7 @@ public class Review implements Comparable<Review> {
         return body;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
@@ -66,7 +66,7 @@ public class Review implements Comparable<Review> {
         Review review = (Review) o;
 
         if (appId != review.appId) return false;
-        if (Double.compare(review.rate, rate) != 0) return false;
+        if (rate != null ? !rate.equals(review.rate) : review.rate != null) return false;
         if (title != null ? !title.equals(review.title) : review.title != null) return false;
         if (body != null ? !body.equals(review.body) : review.body != null) return false;
         if (date != null ? !date.equals(review.date) : review.date != null) return false;
@@ -79,7 +79,7 @@ public class Review implements Comparable<Review> {
         int result;
         long temp;
         result = (int) (appId ^ (appId >>> 32));
-        temp = Double.doubleToLongBits(rate);
+        temp = (rate != null ? rate.hashCode() : 0);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (body != null ? body.hashCode() : 0);

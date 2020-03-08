@@ -1,0 +1,8 @@
+*.iml
+*.tmp
+*.pyc
+.DS_Store
+/.idea/
+/target
+*.xls
+*.xlsx

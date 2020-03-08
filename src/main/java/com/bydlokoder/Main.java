@@ -20,7 +20,7 @@ public class Main {
     private static DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
     private static DateFormat formatterUK = new SimpleDateFormat("dd MMMM yyyy", Locale.UK);
     private static DateFormat formatterUSA = new SimpleDateFormat("MMM dd, yyyy", Locale.US);
-    private static final long[] apps = {464256240, 571689619};
+    private static final long[] apps = {767368903};
 
     private static final int UK_ID = 143444;
     private static final int USA_ID = 143441;
@@ -89,26 +89,26 @@ public class Main {
         String title = titleElement.text(); // string contains a title
         String reviewBody = review.text(); // review itself
         String userInfo = user.text(); // string contains nickname, version of the app and date that can be splitted by dash
-        double rate = Double.parseDouble(starsString.substring(0, 1));
+//        double rate = Double.parseDouble(starsString.substring(0, 1));
         String[] info = userInfo.split("-");
         String version = info[info.length - 2].trim().split(" ")[1];
-        Date date;
+//        Date date;
         String dateString = info[info.length - 1].trim();
-        switch (country.getId()) {
-            case UK_ID:
-                date = formatterUK.parse(dateString);
-                break;
-            case USA_ID:
-                date = formatterUSA.parse(dateString);
-                break;
-            case Venezuela_ID:
-                date = formatterUSA.parse(dateString);
-                break;
-            default:
-                date = formatter.parse(dateString);
-                break;
-        }
-        return new Review(appId, country, rate, title, reviewBody, date, version);
+//        switch (country.getId()) {
+//            case UK_ID:
+//                date = formatterUK.parse(dateString);
+//                break;
+//            case USA_ID:
+//                date = formatterUSA.parse(dateString);
+//                break;
+//            case Venezuela_ID:
+//                date = formatterUSA.parse(dateString);
+//                break;
+//            default:
+//                date = formatter.parse(dateString);
+//                break;
+//        }
+        return new Review(appId, country, starsString, title, reviewBody, dateString, version);
     }
 
     private static Request buildRequest(long appId, Countries country, int page) {
