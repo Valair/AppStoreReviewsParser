@@ -2,7 +2,7 @@ package com.bydlokoder;
 
 import java.util.Date;
 
-public class Review implements Comparable<Review> {
+public class Review {// implements Comparable<Review> {
     private long appId;
     private String rate;
     private String title;
@@ -50,13 +50,13 @@ public class Review implements Comparable<Review> {
         return country;
     }
 
-    public int compareTo(Review review) {
-        if (review.date == null) {
-            return -1;
-        } else {
-            return review.date.compareTo(date);
-        }
-    }
+//    public int compareTo(Review review) {
+//        if (review.date == null) {
+//            return -1;
+//        } else {
+//            return 1;
+//        }
+//    }
 
     @Override
     public boolean equals(Object o) {

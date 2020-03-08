@@ -20,7 +20,7 @@ public class Main {
     private static DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
     private static DateFormat formatterUK = new SimpleDateFormat("dd MMMM yyyy", Locale.UK);
     private static DateFormat formatterUSA = new SimpleDateFormat("MMM dd, yyyy", Locale.US);
-    private static final long[] apps = {767368903};
+    private static final long[] apps = {1377291789};
 
     private static final int UK_ID = 143444;
     private static final int USA_ID = 143441;
@@ -35,11 +35,14 @@ public class Main {
     }
 
     private static Report getReport(long appId) {
-        TreeSet<Review> reviews = new TreeSet<Review>();
+        List<Review> reviews = new ArrayList<>();
         Countries[] countries = Countries.values();
         for (Countries country : countries) {
             reviews.addAll(getAllReviewsForCountry(appId, country));
         }
+
+        System.out.println("Total review: " + reviews.size());
+
         return new Report(appId, reviews);
     }
 
@@ -60,27 +63,39 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        System.out.println("Reviews for country " + country + ": " + reviewList.size());
+
         return reviewList;
     }
 
     private static List<Review> getReviewsFromPage(long appId, Countries country, int page) {
         List<Review> reviewList = new ArrayList<Review>();
-        Request request = buildRequest(appId, country, page);
-        try {
-            Response response = client.newCall(request).execute();
-            InputStream is = response.body().byteStream();
-            Document doc = Jsoup.parse(is, null, request.urlString());
-            Elements titles = doc.getElementsByClass("customerReviewTitle");
-            Elements reviews = doc.getElementsByClass("content");
-            Elements users = doc.getElementsByClass("user-info");
-            for (int i = 0; i < reviews.size(); i++) {
-                reviewList.add(getReview(appId, country, titles.get(i), reviews.get(i), users.get(i)));
+        boolean successful = false;
+        do {
+            Request request = buildRequest(appId, country, page);
+            try {
+                Response response = client.newCall(request).execute();
+                InputStream is = response.body().byteStream();
+                Document doc = Jsoup.parse(is, null, request.urlString());
+                Elements titles = doc.getElementsByClass("customerReviewTitle");
+                Elements reviews = doc.getElementsByClass("content");
+                Elements users = doc.getElementsByClass("user-info");
+                System.out.println("Reviews: " + reviews.size());
+                successful = reviews.size() > 0;
+                for (int i = 0; i < reviews.size(); i++) {
+                    Review review = getReview(appId, country, titles.get(i), reviews.get(i), users.get(i));
+                    if (!reviewList.contains(review)) {
+                        reviewList.add(review);
+                    }
+                }
+            } catch (IOException|ParseException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        } while (!successful);
+
+        System.out.println("Reviews for page " + page + ": " + reviewList.size());
+
         return reviewList;
     }
 
@@ -90,7 +105,7 @@ public class Main {
         String reviewBody = review.text(); // review itself
         String userInfo = user.text(); // string contains nickname, version of the app and date that can be splitted by dash
 //        double rate = Double.parseDouble(starsString.substring(0, 1));
-        String[] info = userInfo.split("-");
+        String[] info = userInfo.split(" - ");
         String version = info[info.length - 2].trim().split(" ")[1];
 //        Date date;
         String dateString = info[info.length - 1].trim();
